@@ -35,16 +35,16 @@ func FindFriend(userId uint) []UserBasic {
 }
 
 //添加好友
-func AddFriend(userId uint,targetId uint) (int,string){
-	user := UserBasic{}
-	if targetId != 0 {
-		user = AddFriendByID(targetId)
-		if user.Salt != "" {
-			if userId == user.ID {
+func AddFriend(userId uint,targetName string) (int,string){
+	//user := UserBasic{}
+	if targetName != "" {
+		targetUser := AddFriendByUser(targetName)
+		if targetUser.Salt != "" {
+			if userId == targetUser.ID {
 				return -1 , "我加我自己,人格分裂喵"
 			}
 			p := Reative{}
-			utils.DB.Where("owner_id = ? and target_id = ? and type=1",userId,targetId).Find(&p)
+			utils.DB.Where("owner_id = ? and target_id = ? and type=1",userId,targetUser.ID).Find(&p)
 			if p.ID != 0 {
 				return -1, "已经是好友了喵"
 			}
@@ -57,7 +57,7 @@ func AddFriend(userId uint,targetId uint) (int,string){
 			}()
 			r := Reative{}
 			r.OwnerId = userId
-			r.TargetId = targetId
+			r.TargetId = targetUser.ID
 			r.Type = 1
 			r.Desc = "好友"
 			if err := utils.DB.Create(&r).Error;err != nil {
@@ -65,7 +65,7 @@ func AddFriend(userId uint,targetId uint) (int,string){
 				return -1,"添加失败"
 			}
 			q := Reative{}
-			q.OwnerId = targetId
+			q.OwnerId = targetUser.ID
 			q.TargetId = userId
 			q.Type = 1
 			q.Desc = "好友"

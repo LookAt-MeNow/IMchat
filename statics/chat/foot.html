@@ -508,9 +508,9 @@
                     mui.prompt('', '请输入好友名称', '加好友', ['取消', '确认'], function (e) {
                         if (e.index == 1) {
                             //判断数字
-                            if (isNaN(e.value) || e.value <= 0) {
-                                mui.toast('格式错误');
-                            } //else {
+                            //if (isNaN(e.value) || e.value <= 0) {
+                            //    mui.toast('格式错误');
+                            //} //else {
                             //mui.toast(e.value);
                             that._addfriend(e.value)
                             //}
@@ -527,7 +527,7 @@
                         this.setTimeFlag()
                         //console.log("_addfriend....")
                         var that = this
-                        post("relative/addfriend", { targetId: dstobj, userId: userId() }, function (res) {
+                        post("relative/addfriend", { targetName: dstobj, userId: userId() }, function (res) {
                             if (res.Code == 0) {
                                 mui.toast("添加成功");
                                 that.loadfriends();

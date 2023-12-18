@@ -11,7 +11,7 @@ import (
 func Router() *gin.Engine{
 	r := gin.Default()
 
-	//swagger
+	//swagger，测试接口
 	docs.SwaggerInfo.BasePath = ""
 	r.GET("/swaggo/*any",ginSwagger.WrapHandler(swaggerfiles.Handler))
 
@@ -34,8 +34,8 @@ func Router() *gin.Engine{
 	r.POST("/user/login",service.FindUserByNameAndPasswd)
 
 	//好友操作
-	r.POST("/findFriend",service.FindFriend)
-	r.POST("/relative/addfriend",service.AddFriend)
+	r.POST("/findFriend",service.FindFriend)       //查找好友
+	r.POST("/relative/addfriend",service.AddFriend)//添加好友
 
 	//发送消息
 	r.GET("/user/sendMsg",service.SendMsg)
