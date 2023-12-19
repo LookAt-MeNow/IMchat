@@ -90,45 +90,47 @@ func sendProc(node *Node) {
 
 func recvProc(node *Node) {
 	for {
-		_, data ,err := node.Conn.ReadMessage() 
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-		broadMsg(data)
+		_, data ,err := node.Conn.ReadMessage() //读取消息
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		//dispatch(data) //调度消息
+		broadMsg(data) //广播消息
 		fmt.Println("[ws]...",string(data))
 	}
 }
 
-var upsendchan chan []byte = make(chan []byte,1024)
+var upsendchan chan []byte = make(chan []byte,1024) //发送消息管道
+
 func broadMsg(data []byte) {
-	upsendchan <- data
+	upsendchan <- data //写入管道
 }
 
 func init(){
 	go upSendProc()
-	go upRecvProc()
+	go upRecvProc() //这个会在项目一启动就执行，init函数会在main函数之前执行
 	fmt.Println("Inti goroutine...")
 }
 
 
 //完成upd数据发送协程
 func upSendProc() {
-	conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
+	conn, err := net.DialUDP("udp", nil, &net.UDPAddr{ //创建连接
 		IP:   net.IPv4(127, 0, 0, 255),
 		Port: 3030,
 	})
-	if err != nil {
+	if err != nil { 
 		fmt.Println(err)
 		return
 	}
-	defer func() {
+	defer func() { //关闭连接
 		if cerr := conn.Close(); cerr != nil {
 			fmt.Println(cerr)
 		}
 	}()
-	for data := range upsendchan {
-		_, err := conn.Write(data)
+	for data := range upsendchan { 
+		_, err := conn.Write(data) //发送数据
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -153,7 +155,7 @@ func upRecvProc() {
 	}()
 	for {
 		var buf [1024]byte
-		n,err := conn.Read(buf[0:])
+		n,err := conn.Read(buf[0:]) //读取数据
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -174,11 +176,11 @@ func dispatch(data []byte) {
 		return
 	}
 	switch msg.Type {
-	case  1: //私信
+		case  1: //私信
 		fmt.Println("dispatch  data :", string(data))
 		sendMsg( msg.TargetId, data)
-	//case "2": //群发
-		//sendGroupMsg(msg.TargetId, data) //发送的群ID ，消息内容
+		case 2: //群发
+		sendGroupMsg(msg.TargetId, data) //发送的群ID ，消息内容
 		// case "4": // 心跳
 		// 	node.Heartbeat()
 		//case "4":
@@ -192,5 +194,16 @@ func sendMsg(useid uint,msg []byte) {
 	Locker.Unlock()
 	if ok {
 		node.DataQueu <- msg
+	}
+}
+
+func sendGroupMsg(groupId uint,msg []byte) {
+	//获取群成员
+	userIds := GetCroupUser(groupId)
+	//遍历群成员
+	for i:= 0;i<len(userIds);i++ {
+		if groupId != userIds[i] { //排除自己
+			sendMsg(userIds[i],msg)
+		}
 	}
 }

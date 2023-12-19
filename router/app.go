@@ -32,19 +32,21 @@ func Router() *gin.Engine{
 	r.GET("/user/deletUser",service.DeletUser)
 	r.POST("/user/updateUser",service.UpdataUser)
 	r.POST("/user/login",service.FindUserByNameAndPasswd)
+	r.POST("/user/find",service.FindByID)
 
 	//好友操作
 	r.POST("/findFriend",service.FindFriend)       //查找好友
 	r.POST("/relative/addfriend",service.AddFriend)//添加好友
 
 	//发送消息
-	r.GET("/user/sendMsg",service.SendMsg)
-	r.GET("/user/sendUserMsg",service.SendUserMsg)
-	r.POST("/attach/upload",service.Upload)
+	r.GET("/user/sendMsg",service.SendMsg)         //发送消息
+	r.GET("/user/sendUserMsg",service.SendUserMsg) //和上面的区别是，这个是给指定用户发送消息
+	r.POST("/attach/upload",service.Upload)        //上传文件,音频和图片
 
 	//群操作
 	r.POST("/relative/createcommunity",service.CreateCommunity)	//创建群
 	r.POST("/relative/loadcommunity",service.LoadCommunity)	//群列表
+	r.POST("/relative/joincommunity",service.JoinCommunity)	//加入群
 	return r
 }
  

@@ -574,6 +574,7 @@
                         let userInfo = JSON.parse(sessionStorage.getItem('userinfo') || '{}');
                         userInfo.Avatar = this.info.icon;
                         userInfo.Name = this.info.name;
+                        
                         sessionStorage.setItem('userinfo', JSON.stringify(userInfo))
                         if (res.Code != 0) {
                             mui.toast(res.message)
@@ -598,7 +599,7 @@
                         this.setTimeFlag();
                         var that = this;
                         console.log(that);
-                        post("contact/joinGroup", { comId: dstobj, "userId": userId() }, function (res) {
+                        post("relative/joincommunity", { comId: dstobj, "userId": userId() }, function (res) {
                             if (res.Code == 0) {
                                 mui.toast("添加成功");
 

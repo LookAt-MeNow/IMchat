@@ -156,9 +156,9 @@ func UpdataUser(c *gin.Context) {
 		panic(err)
 	}
 	user.ID = uint(id)
-	user.Username = c.PostForm("name")
+	user.Username = c.PostForm("name") //PostForm获取表单数据
 	user.Password = c.PostForm("password")
-	
+	user.Avatar = fmt.Sprintf("http://localhost:8080/asset/upload/%s",FileName)
 	models.UpdateUser(user)
 	c.JSON(200, gin.H{
 		"code":		0,//	成功 -1 失败
@@ -166,6 +166,13 @@ func UpdataUser(c *gin.Context) {
 	})
 }
 
+func FindByID(c *gin.Context) {
+	userId, _ := strconv.Atoi(c.Request.FormValue("userId"))
+
+	//	name := c.Request.FormValue("name")
+	data := models.AddFriendByID(uint(userId))
+	utils.RepOKList(c.Writer, data, "ok")
+}
 
 func SendUserMsg(c *gin.Context){
 	models.Chat(c.Writer,c.Request)

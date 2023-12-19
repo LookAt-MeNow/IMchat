@@ -24,15 +24,15 @@
                     <div v-text="msgcontext"></div>
                   -->
                         <div v-if="item.ismine">
-                            <img class="avatar right" :src="info.icon ||'/asset/images/avatar0.png'" />
+                            <img class="avatar right" :src="info.icon ||'/asset/images/avatar0.png'" /> 
                         </div>
                         <div v-else>
-                            <img class="avatar left" :src="otherAvatar ||'/asset/upload/1698070812220015605.jpg'" />    
+                            <img class="avatar left" :src="otherAvatar ||'/asset/images/avatar0.png'" />    <!--对方的头像 -->
                         </div>
                         <span></span>
                         <div class="content">
                             <div v-if="item.msg.Media==1" v-text="item.msg.Content"></div>
-                            <img class="pic" v-if="item.msg.Media==4" :src="item.msg.url" />
+                            <img class="pic" v-if="item.msg.Media==4" :src="item.msg.url" /> 
                             <div v-if="item.msg.Media==3" @tap="playaudio(item.msg.url)">
                                 <img class="audio" src="/asset/images/audiom.png" />
                                 <span v-text="item.msg.amount"></span>

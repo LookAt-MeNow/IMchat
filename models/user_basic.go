@@ -17,6 +17,7 @@ type UserBasic struct {
 	ClientIp 	string 
 	ClirntPort 	string 
 	Salt 		string
+	Avatar      string
 	Logintime 	uint64 
 	Hearbeat 	uint64 
 	Logouttime 	uint64 
@@ -50,7 +51,7 @@ func DeletUser(user UserBasic) *gorm.DB {
 
 //修改用户
 func UpdateUser(user UserBasic) *gorm.DB {
-	return utils.DB.Model(&user).Updates(UserBasic{Username: user.Username, Password: user.Password})
+	return utils.DB.Model(&user).Updates(UserBasic{Username: user.Username, Password: user.Password, Avatar: user.Avatar})
 }
 
 //查找用户by用户名

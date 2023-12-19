@@ -2,7 +2,6 @@ package models
 
 import (
 	"ginchat/utils"
-
 	"gorm.io/gorm"
 )
 
@@ -79,4 +78,38 @@ func AddFriend(userId uint,targetName string) (int,string){
 		return -1,"没有找到此用户"
 	}
 	return -1,"请输入有效字段"
+}
+
+// 加群
+func JoinGroup(userId uint, comId string) (int, string) {
+	r := Reative{}
+	r.OwnerId = userId
+	//contact.TargetId = comId
+	r.Type = 2
+	r.Desc = "群友"
+	community := Community{}
+
+	utils.DB.Where("id=? or name=?", comId, comId).Find(&community)
+	if community.Name == "" {
+		return -1, "没有找到群"
+	}
+	utils.DB.Where("owner_id=? and target_id=? and type =2 ", userId, comId).Find(&r)
+	if !r.CreatedAt.IsZero() {
+		return -1, "已加过此群"
+	} else {
+		r.TargetId = community.ID
+		utils.DB.Create(&r)
+		return 0, "加群成功"
+	}
+}
+
+//获取群友的ID
+func GetCroupUser(communityID uint) []uint{
+	r := make([]Reative, 0)	//群关系
+	obj := make([]uint,0)   //群友ID
+	utils.DB.Where("target_id = ? and type=2", communityID).Find(&r)
+	for _, v := range r {
+		obj = append(obj, uint(v.OwnerId))
+	}
+	return obj
 }
